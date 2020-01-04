@@ -5,8 +5,7 @@
 import tensorflow as tf
 import numpy as np
 import random
-from tensorflow_core.examples.tutorials.mnist import input_data
-
+from tensorflow.examples.tutorials.mnist import input_data
 
 # load date
 # 数据装载
