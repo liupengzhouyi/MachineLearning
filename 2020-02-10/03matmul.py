@@ -9,3 +9,13 @@ print(newDataI)
 
 newDataII = torch.mm(tensor, tensor)
 print(newDataII)
+
+otherDataI = np.array(data)
+newDataIII = otherDataI.dot(otherDataI)
+print(newDataIII)
+
+# newDataIV = tensor.dot(tensor)
+# print(newDataIV)
+
+
+
