@@ -2,7 +2,8 @@
 import tensorflow as tf
 import numpy as np
 import random
-from tensorflow.examples.tutorials.mnist import input_data
+# from tensorflow_core.examples.tutorials.mnist import input_data
+import tensorflow_core.examples.tutorials.mnist.input_data as input_data
 
 print("----begin---")
 
@@ -12,7 +13,7 @@ def weight_variables(shape):
     :param shape:
     :return:
     """
-    w = tf.Variable(tf.random_normal(shape=shape, mean=0.0,stddev=1.0))
+    w = tf.Variable(tf.random.normal(shape=shape, mean=0.0,stddev=1.0))
     return w
 
 
@@ -31,12 +32,12 @@ def model():
     :return:
     """
     # 1, 准备数据占位符 x [None, 784] y_true [None, 10]
-    with tf.variable_scope('data'):
-        x = tf.placeholder(tf.float32, [None, 784])
-        y_ture = tf.placeholder(tf.int32, [None,10])
+    with tf.compat.v1.variable_scope('data'):
+        x = tf.compat.v1.placeholder(tf.float32, [None, 784])
+        y_ture = tf.compat.v1.placeholder(tf.int32, [None,10])
 
     # convlution I
-    with tf.variable_scope("conv1"):
+    with tf.compat.v1.variable_scope("conv1"):
         # 改变形状[None, 784] -> [-1, 28,28,1]
         x_reshape = tf.reshape(x, [-1,28,28,1])
         # 初始化权重
@@ -64,7 +65,7 @@ def model():
     # 卷积核size : 5*5*32
     # 偏置 ： 64
     # 权重： [5, 5, 32, 64]
-    with tf.variable_scope("conv2"):
+    with tf.compat.v1.variable_scope("conv2"):
         # 初始化权重
         w_conv2 = weight_variables([5,5,32,64])
         #初始化偏置
@@ -76,7 +77,7 @@ def model():
         # 池化 [None, 14, 14, 64] -> [None, 7, 7, 64]
         x_pool2 = tf.nn.max_pool(value=x_relu2, ksize=[1,2,2,1], strides=[1,2,2,1], padding="SAME")
 
-    with tf.variable_scope():
+    with tf.compat.v1.variable_scope("conv3"):
         # 随机初始化权重
         w_fc = weight_variables([7*7*64, 10])
         # 随机初始化偏置
@@ -98,24 +99,24 @@ def conv_fc():
     x, y_ture, y_predict = model()
 
     # 进行交叉熵运算计算损失
-    with tf.variable_scope("sotf_cross"):
+    with tf.compat.v1.variable_scope("sotf_cross"):
         # 求平均交叉熵损失
-        loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=y_ture, logits=y_predict))
+        loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=y_predict, labels=y_ture))
 
     # 梯度下降，求出损失
-    with tf.variable_scope("optimizer"):
-        train_op = tf.train.GradientDescentOptimizer(0.1).minimize(loss)
+    with tf.compat.v1.variable_scope("optimizer"):
+        train_op = tf.compat.v1.train.GradientDescentOptimizer(0.1).minimize(loss)
 
     # 计算准确率
-    with tf.variable_scope("acc"):
+    with tf.compat.v1.variable_scope("acc"):
         equal_list = tf.equal(tf.argmax(y_ture, 1), tf.argmax(y_predict, 1))
         accuracy = tf.reduce_mean(tf.cast(equal_list, tf.float32))
 
     # 定义一个初始化变量 op
-    init_op = tf.global_variables_initializer()
+    init_op = tf.compat.v1.global_variables_initializer()
 
     # 开启会话运行
-    with tf.Session() as sess:
+    with tf.compat.v1.Session() as sess:
         sess.run(init_op)
 
         # 循环训练
@@ -131,6 +132,5 @@ def conv_fc():
 
 
 
-if __name__ == "__main__":
-    conv_fc()
+conv_fc()
 
