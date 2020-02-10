@@ -1,27 +1,16 @@
+import sys
+
 import torch
 from torch.autograd import Variable
 import matplotlib.pyplot as plt
+sys.path.append("/Users/liupeng/PycharmProjects/MachineLearning/2020-02-10/06Regression/Net.py")
+from Net import *
 
 x = torch.unsqueeze(torch.linspace(-1, 1, 100), dim=1)
 y = x.pow(2) + 0.2 * torch.rand(x.size())
 
 x = Variable(x)
 y = Variable(y)
-
-# plt.scatter(x.data.numpy(), y.data.numpy())
-# plt.show()
-
-
-class Net(torch.nn.Module):
-    def __init__(self, n_feature, n_hidden, n_output):
-        super(Net, self).__init__()
-        self.hidden = torch.nn.Linear(n_feature, n_hidden)
-        self.predict = torch.nn.Linear(n_hidden, n_output)
-
-    def forward(self, x):
-        x = torch.relu(self.hidden(x))
-        x = self.predict(x)
-        return x
 
 net = Net(1, 10, 1)
 print(net)
@@ -41,7 +30,7 @@ for t in range(100):
     optimizer.zero_grad()
     # 反向传递
     loss.backward()
-
+    # 将参数更新值施加到 net 的 parameters 上
     optimizer.step()
 
     # 接着上面来
